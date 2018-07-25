@@ -1,0 +1,119 @@
+// pages/sys/visitor/showQR.js
+const parkadminApi = new require("../../config/parkAdminAPI.js");
+const app = getApp();
+const util = require('../../utils/util.js');
+const sysApi = require("../../config/parkAdminAPI.js");
+const sysLogin = require("../../utils/sysLogin.js");
+Page({
+
+  /**
+   * 页面的初始数据
+   */
+  data: {
+    roomNo: "",
+      meetingtype:[{'name':'gggggg','name':'jjjjjjjjjjjjjj'}]
+
+
+    meetingtype: [{
+      id: "0",
+      name: ""
+    }],
+    mettingtypeIdx: 0,
+    metting: "请选择"
+  },
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    console.log(options)
+    this.setData({
+    roomNo: options.roomNo,
+     // roomNo: options.roomNo,
+    })
+
+    let that = this;
+    //会议类型枚举start
+    sysLogin.request(sysApi.getMeetingTypeType).then(function (res) {
+      //console.log(res.data);
+      if (0 !== res.data.code) {
+        wx.hideToast();
+        wx.showModal({
+          title: '获取记录失败',
+          content: '获取记录失败',
+          confirmColor: '#b02923',
+          showCancel: false
+        })
+        return;
+      }
+      let dt = res.data.data;
+      let r = [];
+      r.push({ id: "", name: "请选择" });
+      for (let k in dt) {
+        if (that.data.meeting === dt[k]["BIANMA"]) {
+          that.data.meetingtypeIdx = k;
+        }
+        r.push({ id: dt[k]["BIANMA"], name: dt[k]["NAME"] });
+      }
+      that.setData({ meetingtype: r });
+      console.log(that.data);
+      wx.hideToast();
+    })
+    //会议类型枚举end
+
+  },
+  bindPickerMettingType: function (e) {
+    let id = this.data.meetingtype[e.detail.value].id;
+    this.setData({
+      meetingtypeIdx: e.detail.value,
+      meeting: id
+    })
+    console.log("bindPickerMettingType");
+    console.log(this.data);
+  },
+
+
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+
+  }
+
+
+})
